@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>MathDown</title>
+    <link rel="stylesheet" href="github-markdown.css">
+    <link rel="stylesheet" href="arduino-highlight.css">
+    <style>
+    @media screen {
+      html, body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+      .wrapper {
+        width: 50%;
+        height: 100vh;
+        margin: 0;
+        padding: 0.8rem 0;
+        overflow: hidden;
+      }
+      .preview { float: right; }
+      .editor { float: left; }
+      .editor.wrapper { background-color: rgba(128, 128, 128, 0.1); }
+
+      .cover {
+        width: 100%;
+        height: 100%;
+        background-color: transparent;
+      }
+      #editor {
+        border: none;
+        outline: none;
+        resize: none;
+        font-size: 1rem;
+        color: inherit;
+      }
+      #editor, #preview {
+        padding: 0 0.8rem;
+        overflow: auto;
+      }
+      #toggle-theme {
+        position: absolute;
+        top: 0.4rem;
+        right: 0.4rem;
+        height: 1.5rem;
+        width: 1.5rem;
+        font-size: 100%;
+        border: none;
+        padding: 0;
+        background-color: #f3f3f3;
+        cursor: pointer;
+      }
+      .night-mode {
+        background-color: #212121;
+        color: #e0e0e0;
+      }
+      .night-mode pre { background-color: #111; }
+      //code, table { color: #000000 !important; }
+      .container { overflow: hidden; }
+    }
+    @media screen and (max-width: 599px) {
+      .wrapper {
+        height: 50vh;
+        width: 100%;
+      }
+    }
+    @media screen {
+      .editor.wrapper, #toggle-theme { display: none; }
+      .preview.wrapper { width: 100%; }
+      .preview { color: #000000; }
+    }
+    </style>
+    <script type="text/x-mathjax-config;executed=true">
+      MathJax.Hub.Config({
+        tex2jax: { inlineMath: [['`', '`']] },
+        asciimath2jax: { delimiters: [['$','$']] },
+        //showMathMenu: false
+      });
+    </script>
+    <script type="text/javascript" async="" src="MathJax/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+  <style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 5px 0px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; -khtml-border-radius: 5px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 1px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: .7em}
+.MathJax_MenuRadioCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuLabel {padding: 1px 2em 3px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #DDDDDD; margin: 4px 3px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: #606872; color: white}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1px; bottom: 2px; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style><style type="text/css">.mjx-chtml {display: inline-block; line-height: 0; text-indent: 0; text-align: left; text-transform: none; font-style: normal; font-weight: normal; font-size: 100%; font-size-adjust: none; letter-spacing: normal; word-wrap: normal; word-spacing: normal; white-space: nowrap; float: none; direction: ltr; max-width: none; max-height: none; min-width: 0; min-height: 0; border: 0; margin: 0; padding: 1px 0}
+.MJXc-display {display: block; text-align: center; margin: 1em 0; padding: 0}
+.mjx-chtml[tabindex]:focus, body :focus .mjx-chtml[tabindex] {display: inline-table}
+.mjx-full-width {text-align: center; display: table-cell!important; width: 10000em}
+.mjx-math {display: inline-block; border-collapse: separate; border-spacing: 0}
+.mjx-math * {display: inline-block; -webkit-box-sizing: content-box!important; -moz-box-sizing: content-box!important; box-sizing: content-box!important; text-align: left}
+.mjx-numerator {display: block; text-align: center}
+.mjx-denominator {display: block; text-align: center}
+.MJXc-stacked {height: 0; position: relative}
+.MJXc-stacked > * {position: absolute}
+.MJXc-bevelled > * {display: inline-block}
+.mjx-stack {display: inline-block}
+.mjx-op {display: block}
+.mjx-under {display: table-cell}
+.mjx-over {display: block}
+.mjx-over > * {padding-left: 0px!important; padding-right: 0px!important}
+.mjx-under > * {padding-left: 0px!important; padding-right: 0px!important}
+.mjx-stack > .mjx-sup {display: block}
+.mjx-stack > .mjx-sub {display: block}
+.mjx-prestack > .mjx-presup {display: block}
+.mjx-prestack > .mjx-presub {display: block}
+.mjx-delim-h > .mjx-char {display: inline-block}
+.mjx-surd {vertical-align: top}
+.mjx-mphantom * {visibility: hidden}
+.mjx-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 2px 3px; font-style: normal; font-size: 90%}
+.mjx-annotation-xml {line-height: normal}
+.mjx-menclose > svg {fill: none; stroke: currentColor}
+.mjx-mtr {display: table-row}
+.mjx-mlabeledtr {display: table-row}
+.mjx-mtd {display: table-cell; text-align: center}
+.mjx-label {display: table-row}
+.mjx-box {display: inline-block}
+.mjx-block {display: block}
+.mjx-span {display: inline}
+.mjx-char {display: block; white-space: pre}
+.mjx-itable {display: inline-table; width: auto}
+.mjx-row {display: table-row}
+.mjx-cell {display: table-cell}
+.mjx-table {display: table; width: 100%}
+.mjx-line {display: block; height: 0}
+.mjx-strut {width: 0; padding-top: 1em}
+.mjx-vsize {width: 0}
+.MJXc-space1 {margin-left: .167em}
+.MJXc-space2 {margin-left: .222em}
+.MJXc-space3 {margin-left: .278em}
+.mjx-chartest {display: block; visibility: hidden; position: absolute; top: 0; line-height: normal; font-size: 500%}
+.mjx-chartest .mjx-char {display: inline}
+.mjx-chartest .mjx-box {padding-top: 1000px}
+.MJXc-processing {visibility: hidden; position: fixed; width: 0; height: 0; overflow: hidden}
+.MJXc-processed {display: none}
+.mjx-test {display: block; font-style: normal; font-weight: normal; font-size: 100%; font-size-adjust: none; text-indent: 0; text-transform: none; letter-spacing: normal; word-spacing: normal; overflow: hidden; height: 1px}
+.mjx-ex-box-test {position: absolute; overflow: hidden; width: 1px; height: 60ex}
+.mjx-line-box-test {display: table!important}
+.mjx-line-box-test span {display: table-cell!important; width: 10000em!important; min-width: 0; max-width: none; padding: 0; border: 0; margin: 0}
+#MathJax_CHTML_Tooltip {background-color: InfoBackground; color: InfoText; border: 1px solid black; box-shadow: 2px 2px 5px #AAAAAA; -webkit-box-shadow: 2px 2px 5px #AAAAAA; -moz-box-shadow: 2px 2px 5px #AAAAAA; -khtml-box-shadow: 2px 2px 5px #AAAAAA; padding: 3px 4px; z-index: 401; position: absolute; left: 0; top: 0; width: auto; height: auto; display: none}
+.mjx-chtml .mjx-noError {line-height: 1.2; vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+.MJXc-TeX-unknown-R {font-family: STIXGeneral,'Cambria Math','Arial Unicode MS',serif; font-style: normal; font-weight: normal}
+.MJXc-TeX-unknown-I {font-family: STIXGeneral,'Cambria Math','Arial Unicode MS',serif; font-style: italic; font-weight: normal}
+.MJXc-TeX-unknown-B {font-family: STIXGeneral,'Cambria Math','Arial Unicode MS',serif; font-style: normal; font-weight: bold}
+.MJXc-TeX-unknown-BI {font-family: STIXGeneral,'Cambria Math','Arial Unicode MS',serif; font-style: italic; font-weight: bold}
+.MJXc-TeX-ams-R {font-family: MJXc-TeX-ams-R,MJXc-TeX-ams-Rw}
+.MJXc-TeX-cal-B {font-family: MJXc-TeX-cal-B,MJXc-TeX-cal-Bx,MJXc-TeX-cal-Bw}
+.MJXc-TeX-frak-R {font-family: MJXc-TeX-frak-R,MJXc-TeX-frak-Rw}
+.MJXc-TeX-frak-B {font-family: MJXc-TeX-frak-B,MJXc-TeX-frak-Bx,MJXc-TeX-frak-Bw}
+.MJXc-TeX-math-BI {font-family: MJXc-TeX-math-BI,MJXc-TeX-math-BIx,MJXc-TeX-math-BIw}
+.MJXc-TeX-sans-R {font-family: MJXc-TeX-sans-R,MJXc-TeX-sans-Rw}
+.MJXc-TeX-sans-B {font-family: MJXc-TeX-sans-B,MJXc-TeX-sans-Bx,MJXc-TeX-sans-Bw}
+.MJXc-TeX-sans-I {font-family: MJXc-TeX-sans-I,MJXc-TeX-sans-Ix,MJXc-TeX-sans-Iw}
+.MJXc-TeX-script-R {font-family: MJXc-TeX-script-R,MJXc-TeX-script-Rw}
+.MJXc-TeX-type-R {font-family: MJXc-TeX-type-R,MJXc-TeX-type-Rw}
+.MJXc-TeX-cal-R {font-family: MJXc-TeX-cal-R,MJXc-TeX-cal-Rw}
+.MJXc-TeX-main-B {font-family: MJXc-TeX-main-B,MJXc-TeX-main-Bx,MJXc-TeX-main-Bw}
+.MJXc-TeX-main-I {font-family: MJXc-TeX-main-I,MJXc-TeX-main-Ix,MJXc-TeX-main-Iw}
+.MJXc-TeX-main-R {font-family: MJXc-TeX-main-R,MJXc-TeX-main-Rw}
+.MJXc-TeX-math-I {font-family: MJXc-TeX-math-I,MJXc-TeX-math-Ix,MJXc-TeX-math-Iw}
+.MJXc-TeX-size1-R {font-family: MJXc-TeX-size1-R,MJXc-TeX-size1-Rw}
+.MJXc-TeX-size2-R {font-family: MJXc-TeX-size2-R,MJXc-TeX-size2-Rw}
+.MJXc-TeX-size3-R {font-family: MJXc-TeX-size3-R,MJXc-TeX-size3-Rw}
+.MJXc-TeX-size4-R {font-family: MJXc-TeX-size4-R,MJXc-TeX-size4-Rw}
+.MJXc-TeX-vec-R {font-family: MJXc-TeX-vec-R,MJXc-TeX-vec-Rw}
+.MJXc-TeX-vec-B {font-family: MJXc-TeX-vec-B,MJXc-TeX-vec-Bx,MJXc-TeX-vec-Bw}
+@font-face {font-family: MJXc-TeX-ams-R; src: local('MathJax_AMS'), local('MathJax_AMS-Regular')}
+@font-face {font-family: MJXc-TeX-ams-Rw; src /*1*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/eot/MathJax_AMS-Regular.eot'); src /*2*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/woff/MathJax_AMS-Regular.woff') format('woff'), url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/otf/MathJax_AMS-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-cal-B; src: local('MathJax_Caligraphic Bold'), local('MathJax_Caligraphic-Bold')}
+@font-face {font-family: MJXc-TeX-cal-Bx; src: local('MathJax_Caligraphic'); font-weight: bold}
+@font-face {font-family: MJXc-TeX-cal-Bw; src /*1*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/eot/MathJax_Caligraphic-Bold.eot'); src /*2*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/woff/MathJax_Caligraphic-Bold.woff') format('woff'), url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/otf/MathJax_Caligraphic-Bold.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-frak-R; src: local('MathJax_Fraktur'), local('MathJax_Fraktur-Regular')}
+@font-face {font-family: MJXc-TeX-frak-Rw; src /*1*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/eot/MathJax_Fraktur-Regular.eot'); src /*2*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/woff/MathJax_Fraktur-Regular.woff') format('woff'), url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/otf/MathJax_Fraktur-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-frak-B; src: local('MathJax_Fraktur Bold'), local('MathJax_Fraktur-Bold')}
+@font-face {font-family: MJXc-TeX-frak-Bx; src: local('MathJax_Fraktur'); font-weight: bold}
+@font-face {font-family: MJXc-TeX-frak-Bw; src /*1*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/eot/MathJax_Fraktur-Bold.eot'); src /*2*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/woff/MathJax_Fraktur-Bold.woff') format('woff'), url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/otf/MathJax_Fraktur-Bold.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-math-BI; src: local('MathJax_Math BoldItalic'), local('MathJax_Math-BoldItalic')}
+@font-face {font-family: MJXc-TeX-math-BIx; src: local('MathJax_Math'); font-weight: bold; font-style: italic}
+@font-face {font-family: MJXc-TeX-math-BIw; src /*1*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/eot/MathJax_Math-BoldItalic.eot'); src /*2*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/woff/MathJax_Math-BoldItalic.woff') format('woff'), url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/otf/MathJax_Math-BoldItalic.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-sans-R; src: local('MathJax_SansSerif'), local('MathJax_SansSerif-Regular')}
+@font-face {font-family: MJXc-TeX-sans-Rw; src /*1*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/eot/MathJax_SansSerif-Regular.eot'); src /*2*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/woff/MathJax_SansSerif-Regular.woff') format('woff'), url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/otf/MathJax_SansSerif-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-sans-B; src: local('MathJax_SansSerif Bold'), local('MathJax_SansSerif-Bold')}
+@font-face {font-family: MJXc-TeX-sans-Bx; src: local('MathJax_SansSerif'); font-weight: bold}
+@font-face {font-family: MJXc-TeX-sans-Bw; src /*1*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/eot/MathJax_SansSerif-Bold.eot'); src /*2*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/woff/MathJax_SansSerif-Bold.woff') format('woff'), url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/otf/MathJax_SansSerif-Bold.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-sans-I; src: local('MathJax_SansSerif Italic'), local('MathJax_SansSerif-Italic')}
+@font-face {font-family: MJXc-TeX-sans-Ix; src: local('MathJax_SansSerif'); font-style: italic}
+@font-face {font-family: MJXc-TeX-sans-Iw; src /*1*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/eot/MathJax_SansSerif-Italic.eot'); src /*2*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/woff/MathJax_SansSerif-Italic.woff') format('woff'), url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/otf/MathJax_SansSerif-Italic.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-script-R; src: local('MathJax_Script'), local('MathJax_Script-Regular')}
+@font-face {font-family: MJXc-TeX-script-Rw; src /*1*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/eot/MathJax_Script-Regular.eot'); src /*2*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/woff/MathJax_Script-Regular.woff') format('woff'), url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/otf/MathJax_Script-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-type-R; src: local('MathJax_Typewriter'), local('MathJax_Typewriter-Regular')}
+@font-face {font-family: MJXc-TeX-type-Rw; src /*1*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/eot/MathJax_Typewriter-Regular.eot'); src /*2*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/woff/MathJax_Typewriter-Regular.woff') format('woff'), url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/otf/MathJax_Typewriter-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-cal-R; src: local('MathJax_Caligraphic'), local('MathJax_Caligraphic-Regular')}
+@font-face {font-family: MJXc-TeX-cal-Rw; src /*1*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/eot/MathJax_Caligraphic-Regular.eot'); src /*2*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/woff/MathJax_Caligraphic-Regular.woff') format('woff'), url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/otf/MathJax_Caligraphic-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-main-B; src: local('MathJax_Main Bold'), local('MathJax_Main-Bold')}
+@font-face {font-family: MJXc-TeX-main-Bx; src: local('MathJax_Main'); font-weight: bold}
+@font-face {font-family: MJXc-TeX-main-Bw; src /*1*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/eot/MathJax_Main-Bold.eot'); src /*2*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/woff/MathJax_Main-Bold.woff') format('woff'), url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/otf/MathJax_Main-Bold.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-main-I; src: local('MathJax_Main Italic'), local('MathJax_Main-Italic')}
+@font-face {font-family: MJXc-TeX-main-Ix; src: local('MathJax_Main'); font-style: italic}
+@font-face {font-family: MJXc-TeX-main-Iw; src /*1*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/eot/MathJax_Main-Italic.eot'); src /*2*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/woff/MathJax_Main-Italic.woff') format('woff'), url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/otf/MathJax_Main-Italic.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-main-R; src: local('MathJax_Main'), local('MathJax_Main-Regular')}
+@font-face {font-family: MJXc-TeX-main-Rw; src /*1*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/eot/MathJax_Main-Regular.eot'); src /*2*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/woff/MathJax_Main-Regular.woff') format('woff'), url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/otf/MathJax_Main-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-math-I; src: local('MathJax_Math Italic'), local('MathJax_Math-Italic')}
+@font-face {font-family: MJXc-TeX-math-Ix; src: local('MathJax_Math'); font-style: italic}
+@font-face {font-family: MJXc-TeX-math-Iw; src /*1*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/eot/MathJax_Math-Italic.eot'); src /*2*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/woff/MathJax_Math-Italic.woff') format('woff'), url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/otf/MathJax_Math-Italic.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-size1-R; src: local('MathJax_Size1'), local('MathJax_Size1-Regular')}
+@font-face {font-family: MJXc-TeX-size1-Rw; src /*1*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/eot/MathJax_Size1-Regular.eot'); src /*2*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/woff/MathJax_Size1-Regular.woff') format('woff'), url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/otf/MathJax_Size1-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-size2-R; src: local('MathJax_Size2'), local('MathJax_Size2-Regular')}
+@font-face {font-family: MJXc-TeX-size2-Rw; src /*1*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/eot/MathJax_Size2-Regular.eot'); src /*2*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/woff/MathJax_Size2-Regular.woff') format('woff'), url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/otf/MathJax_Size2-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-size3-R; src: local('MathJax_Size3'), local('MathJax_Size3-Regular')}
+@font-face {font-family: MJXc-TeX-size3-Rw; src /*1*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/eot/MathJax_Size3-Regular.eot'); src /*2*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/woff/MathJax_Size3-Regular.woff') format('woff'), url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/otf/MathJax_Size3-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-size4-R; src: local('MathJax_Size4'), local('MathJax_Size4-Regular')}
+@font-face {font-family: MJXc-TeX-size4-Rw; src /*1*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/eot/MathJax_Size4-Regular.eot'); src /*2*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/woff/MathJax_Size4-Regular.woff') format('woff'), url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/otf/MathJax_Size4-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-vec-R; src: local('MathJax_Vector'), local('MathJax_Vector-Regular')}
+@font-face {font-family: MJXc-TeX-vec-Rw; src /*1*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/eot/MathJax_Vector-Regular.eot'); src /*2*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/woff/MathJax_Vector-Regular.woff') format('woff'), url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/otf/MathJax_Vector-Regular.otf') format('opentype')}
+@font-face {font-family: MJXc-TeX-vec-B; src: local('MathJax_Vector Bold'), local('MathJax_Vector-Bold')}
+@font-face {font-family: MJXc-TeX-vec-Bx; src: local('MathJax_Vector'); font-weight: bold}
+@font-face {font-family: MJXc-TeX-vec-Bw; src /*1*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/eot/MathJax_Vector-Bold.eot'); src /*2*/: url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/woff/MathJax_Vector-Bold.woff') format('woff'), url('http://localhost:8000/MathJax/fonts/HTML-CSS/TeX/otf/MathJax_Vector-Bold.otf') format('opentype')}
+</style></head>
+  <body class="markdown-body"><div id="MathJax_Message" style="display: none;"></div>
+    <main role="main" class="container">
+      <div class="editor wrapper">
+        <textarea id="editor" class="cover" spellcheck="false" placeholder="### Mathdown"></textarea>
+      </div>
+      <div class="preview wrapper">
+        <div id="preview" class="cover"><style>
+@media print {
+  .markdown-body {
+    font-size: 10pt;
+    margin: 0;
+  }
+  .markdown-body code { background-color: #fff; }
+}
+.markdown-body {
+  font-family: Palatino;
+  line-height: 1.2;
+}
+.markdown-body hr {
+  height: 2pt;
+  background-color: #212121;
+}
+.preview.wrapper, #preview.cover { padding: 0; }
+
+.page {
+  page-break-after: always;
+  page-break-inside: avoid;
+  position: relative;
+  padding: 1.5cm 1cm;
+}
+.content > p {
+  text-indent: 1cm;
+  text-align: justify;
+}
+.content > ul, .content > ol, .justify {
+  text-align: justify;
+}
+.col.half {
+  width: 49.6%;
+  display: inline-block;
+  vertical-align: top;
+}
+.col.half.left {   padding-right: 0.25cm; }
+.col.half.right {   padding-left: 0.25cm; }
+.page-num {
+  position: absolute;
+  top: 0.5cm;
+  right: 1cm;
+}
+</style>
+<div class="page">
+<center>
+<h3><big>Stepper Motor controlled Positioning Goniometer</big><br>for Brewster Angle Experiment</h3>
+<p><big>Shivaprasad V.</big></p>
+<p>PH18C032<br>
+<em>1<sup>st</sup> Year M.Sc. Physics<br>
+Indian Institute of Technology<br>
+Madras</em></p>
+<p>Dated: November 14, 2018</p>
+</center>
+<ul>
+<li><strong>Abstract:</strong> This project aims to remedy some of the defects of the Brewster Angle experiment of the M.Sc. lab course by extending the Stepper Motor experiment of the same course to do the necessary precision rotation and intensity measurements.</li>
+</ul>
+<div class="left half col content">
+<h3>1. Introduction</h3>
+<p>Experimentation forms one of the two pillars of scientific methodology. It serves as a way to validate theoretical conclusions and poses new problems to be solved. As experiments begin to mature, diving deeper into the complexity of underlying phenomena, the delicacy with which  they need to be carried out also increases. This demands for more precision in the measurement techniques employed. While a great amount of precision can be achieved with human faculties alone, sometimes the requirement far exceeds our limitations. Also, it consumes a lot of time, which could otherwise be invested in analysis and interpretation of the result.</p>
+<p>This is where computers and computer-controlled machinery become useful. Their capability of carrying out fine adjustments and measurements much more efficiently makes them favourable for various applications in modern laboratories. For instance, computer controlled stepper motors are a type of motion-control positioning system used in CNCs. In the field of lasers and optics they are frequently used in precision positioning equipment such as linear stages, rotation stages, goniometers, etc.<sup><a href="#cite1">[1]</a></sup> Such devices are usually quite expensive, making them common only in advanced research laboratories. Still, moderately precise stepper motors are commercially available, and, with a bit of C programming, can be controlled using a cheap Arduino board equipped with a micro-controller. This opens up a wide range possibilities to manually build precision tracking instruments in smaller labs with less expensive equipments.</p>
+</div>
+<div class="right half col content"><br>
+<p>This project aimed to explore this possibility to construct a precision-rotation assembly using a stepper motor and other parts, for controlling the hand-operated Brewster Angle experiment apparatus.</p>
+<h3>2. Background</h3>
+<p>The aim of the OS8 - Polarisation &amp; Brewster's Angle experiment<sup><a href="#cite2">[2]</a></sup> of the Lab course is to study the phenomenon of optical polarisation. The objectives are to find the Brewster's Angle for a given interface (and hence find its refractive index), and to validate Fresnel's equations by plotting the variation of reflection coefficient for the interface with angle of incidence. The experimental procedure involves measuring the intensity variations of a LASER beam reflected off the surface of a given sample, using a detector mounted on a hand rotated goniometer.<sup><a href="#cite3">[3]</a></sup></p>
+<p>While doing this experiment, I noted the following drawbacks to the apparatus:.</p>
+<ul>
+<li>Inaccuracy of the rotating assembly: the precision depended on the experimenter.</li>
+<li>Usage of a small area photodiode: ideally the total intensity needs to be measured, which require a large area photo diode; so I opted to measure the intensity at the brightest point on the spot. But now it took a long time to track the brightest point on the beam manually.</li>
+<li>Lack of precision and short range of the measurement unit: the device has a least count of single decimal place, and a range of 0‐200mA/<span class="MathJax_Preview" style="color: inherit; display: none;"></span><span id="MathJax-Element-26276-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mstyle displaystyle=&quot;true&quot;><mi>&amp;#x3BC;</mi></mstyle></math>" role="presentation" style="font-size: 106%; position: relative;"><span id="MJXc-Node-195831" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-195832" class="mjx-mrow"><span id="MJXc-Node-195833" class="mjx-mstyle"><span id="MJXc-Node-195834" class="mjx-mrow"><span id="MJXc-Node-195835" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.239em; padding-bottom: 0.475em;">μ</span></span></span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mstyle displaystyle="true"><mi>μ</mi></mstyle></math></span></span><script type="math/asciimath" id="MathJax-Element-26276">mu</script>A depending on the sensitivity used.</li>
+</ul>
+</div>
+</div> <!--page 1-->
+<div class="page">
+<div class="left half col content">
+<ul>
+<li>This  resolution was found to be inadequate at low intensities. At high intensities the unit overflowed.</li>
+</ul>
+<p>The IS1 - Stepper motor experiment<sup><a href="#cite4">[4]</a></sup> is aimed to build an understanding of the basic operation of a computer controlled bipolar stepper motor. The main objective here is to learn how to program an Arduino to generate the digital waveform necessary to drive the stepper motor. Different programs are developed that explore various features of the Arduino like outputting digital pulses, reading analog input, and responding to a sensor signal.</p>
+<p>The rotation of the stepper motor can be controlled with fine precision. The analog input of the Arduino has a range of 0 - 5V with a least count of 0.00489V at its analog input terminal. The stepper motor can precisely control the goniometer of the Brewster Angle apparatus; meanwhile the Arduino can continuously monitor the detector output with high resolution and determine the maximum obtained intensity with simple logic. Thus, this simple experiment has the potential to remedy the aforementioned drawbacks of the Brewster Angle apparatus, which lay the inspiration for this project.</p>
+<h3>3. Proposal</h3>
+<p>The central objectives of this project were:</p>
+<ol>
+<li>To construct an electronic circuit to translate the detector output to Arduino's analog input;</li>
+<li>To build a mechanical assembly needed to transmit the torque of rotation of the stepper motor to the goniometer; and</li>
+<li>To program the Arduino with necessary logic to control the whole assembly.</li>
+</ol>
+<p>At the onset itself it must be made clear that this project did not aim to build a commercial-grade equipment to be permanently attached to the Brewster Angle apparatus. Instead, it should be considered as a just a demonstration of the larger real-life application of the stepper motor device.</p>
+<h4>3.1 Design decisions</h4>
+<p>In order to achieve the above proposals, foremost the second objective (which required to construct physical hardware), two approaches could be followed:</p>
+</div>
+<div class="right half col content">
+<ul>
+<li>Design all the moving parts of the assembly, purchase necessary items and make a dedicated hardware with the help of the department workshop.</li>
+<li>Utilise whatever mechanical components available in the M.Sc. Labs to construct the assembly, which can be dismantled and returned back to their sources after use.</li>
+</ul>
+<p>Owing to the time constraints on the project, I chose to follow the latter, do-it-yourself approach. This allowed me to jump right into the implementation of the project without delay, gave immediate feedback about what worked and what didn't, and liberated me from any dependency on external sources to explore on my own.</p>
+<h4>3.2 Expected challenges</h4>
+<p>This posed the challenging part of the experiment, which was engineering the moving parts myself, which involved handling mechanical devices like gears, belts, pulleys, etc. As I resolved to reuse existing lab equipments, I was also required to modify the main components in a non-permanent fashion. I decided on a trial-and-error approach to arrive at a working solution.</p>
+<h3>4. Experiment</h3>
+<h4>4.1 Understanding the detector</h4>
+<p>The detector of the Brewster Angle apparatus uses a photodiode<sup><a href="#cite3">[3]</a></sup> as its sensor. The output is fed into the measurement unit via a universal 3.5mm audio jack-and-plug connection. The photodiode is operated in photoconductive mode<sup><a href="#cite5">[5]</a></sup>, with the measurement unit providing a biasing voltage of 5V via the same connection (this was determined using a multimeter and a spare 3.5mm plug). The unit then internally measures the current that flows in the circuit. When no light is incident on the photodiode, its resistance is very high (<span class="MathJax_Preview" style="color: inherit; display: none;"></span><span id="MathJax-Element-26277-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mstyle displaystyle=&quot;true&quot;><mo>&amp;#x2248;</mo><mrow><mtext>M</mtext></mrow><mo>&amp;#x3A9;</mo></mstyle></math>" role="presentation" style="font-size: 106%; position: relative;"><span id="MJXc-Node-195836" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-195837" class="mjx-mrow"><span id="MJXc-Node-195838" class="mjx-mstyle"><span id="MJXc-Node-195839" class="mjx-mrow"><span id="MJXc-Node-195840" class="mjx-mo" style="padding-left: 0.333em; padding-right: 0.333em;"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.18em; padding-bottom: 0.298em;">≈</span></span><span id="MJXc-Node-195841" class="mjx-mrow"><span id="MJXc-Node-195842" class="mjx-mtext"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.416em; padding-bottom: 0.357em;">M</span></span></span><span id="MJXc-Node-195843" class="mjx-mo"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.416em; padding-bottom: 0.357em;">Ω</span></span></span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mstyle displaystyle="true"><mo>≈</mo><mrow><mtext>M</mtext></mrow><mo>Ω</mo></mstyle></math></span></span><script type="math/asciimath" id="MathJax-Element-26277">~~"M"Omega</script>) and almost no current flows in the circuit. When it is exposed to light, its resistance decreases and the current increases.</p>
+<p>This operation of the photodiode was replicated using the circuit given in <a href="#fig1">fig. 1</a>. The biasing voltage was taken from the built-in 5V DC output pin of the Arduino itself, eliminating the need for an external voltage source. As the Arduino could measure only analog voltage values, a variable shunt resistance was connected in series with the photodiode, the voltage</p>
+<div class="page-num">2</div>
+</div>
+</div><!--page 2-->
+<div class="page">
+<div class="left half col content justify">
+across which was fed into the Arduino's analog input pin. Hence the Arduino recorded light intensities as voltages. The range of voltage measurements can be fine tuned by adjusting the variable resistance. The sensor value was monitored using Arduino's Serial output monitor.
+<center id="fig1"><br>
+<p><img src="project_report/fig1.svg" alt="Figure 1">
+<small>fig. 1: Sensor circuit for receiving photodiode output</small></p>
+</center>
+<h4>4.2 Attaching the rotating assembly on the goniometer</h4>
+<p>This turned out to be the most challenging part of the project, and took the lion share of time to complete. The hand-operated goniometer of this particular apparatus does not feature a circular cross section for attaching a rotating component, neither was it designed to ever have such an addition. The asymmetric rectangular shape of the component made attaching a conveyor belt impractical as well. In the end I had to pull apart the instrument to find a spot to fix a circular rotating wheel as a separate layer.</p>
+<p><a href="#fig2">Fig. 2</a> shows the circular ring with a toothed belt overlay along its circumference, made out of an</p>
+</div>
+<div class="right half col content justify">
+old laser holder. On the ring is attached a holder like arrangement for attaching it to the goniometer. The assembly is mounted just below the goniometer, turning the later along with it.
+<h4>4.3 Torque transmission shaft</h4>
+<p>The bipolar stepper motor used in the experiment has a full-step resolution of <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span id="MathJax-Element-26278-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mstyle displaystyle=&quot;true&quot;><msup><mn>1.8</mn><mo>&amp;#x2218;</mo></msup></mstyle></math>" role="presentation" style="font-size: 106%; position: relative;"><span id="MJXc-Node-195844" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-195845" class="mjx-mrow"><span id="MJXc-Node-195846" class="mjx-mstyle"><span id="MJXc-Node-195847" class="mjx-mrow"><span id="MJXc-Node-195848" class="mjx-msup"><span class="mjx-base"><span id="MJXc-Node-195849" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.357em; padding-bottom: 0.357em;">1.8</span></span></span><span class="mjx-sup" style="font-size: 70.7%; vertical-align: 0.591em; padding-left: 0px; padding-right: 0.071em;"><span id="MJXc-Node-195850" class="mjx-mo" style="padding-left: 0.15em; padding-right: 0.15em;"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.18em; padding-bottom: 0.298em;">∘</span></span></span></span></span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mstyle displaystyle="true"><msup><mn>1.8</mn><mo>∘</mo></msup></mstyle></math></span></span><script type="math/asciimath" id="MathJax-Element-26278">1.8^@</script>. This is too large for precise rotation of the goniometer. Driving the stepper motor in half-step mode gives a precision of <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span id="MathJax-Element-26279-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mstyle displaystyle=&quot;true&quot;><msup><mn>0.9</mn><mo>&amp;#x2218;</mo></msup></mstyle></math>" role="presentation" style="font-size: 106%; position: relative;"><span id="MJXc-Node-195851" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-195852" class="mjx-mrow"><span id="MJXc-Node-195853" class="mjx-mstyle"><span id="MJXc-Node-195854" class="mjx-mrow"><span id="MJXc-Node-195855" class="mjx-msup"><span class="mjx-base"><span id="MJXc-Node-195856" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.357em; padding-bottom: 0.357em;">0.9</span></span></span><span class="mjx-sup" style="font-size: 70.7%; vertical-align: 0.591em; padding-left: 0px; padding-right: 0.071em;"><span id="MJXc-Node-195857" class="mjx-mo" style="padding-left: 0.15em; padding-right: 0.15em;"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.18em; padding-bottom: 0.298em;">∘</span></span></span></span></span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mstyle displaystyle="true"><msup><mn>0.9</mn><mo>∘</mo></msup></mstyle></math></span></span><script type="math/asciimath" id="MathJax-Element-26279">0.9^@</script> which is still not small enough for precision rotation. Furthermore, half-stepping reduces the torque supplied by the motor. So I decided to use combinations of gears to reduce the resolution further. This was the motive behind attaching a toothed belt around the rotating wheel attached to the goniometer. A gear approximately fitting the teeth of the belt was procured from M.Sc. Electromagnetics Lab.</p>
+<h4>4.3.1 First model</h4>
+<p>At first the gear was directly attached to the vertically oriented stepper motor. This was then brought in contact with the goniometer wheel. The gears fairly transmitted the motion and the motor was able to provide enough torque to rotate the goniometer. Rough trials were successful in positioning the detector at the spot of the beam using the C program logic (discussed in 4.4 below). Photographs of the arrangement are given in <a href="#fig3">fig. 3</a>.</p>
+<p>The gear ratio for the arrangement was calculated to be approximately 3:1, thus bringing down the resolution to <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span id="MathJax-Element-26280-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mstyle displaystyle=&quot;true&quot;><mo>&amp;#x2248;</mo><msup><mn>0.6</mn><mo>&amp;#x2218;</mo></msup></mstyle></math>" role="presentation" style="font-size: 106%; position: relative;"><span id="MJXc-Node-195858" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-195859" class="mjx-mrow"><span id="MJXc-Node-195860" class="mjx-mstyle"><span id="MJXc-Node-195861" class="mjx-mrow"><span id="MJXc-Node-195862" class="mjx-mo" style="padding-left: 0.333em; padding-right: 0.333em;"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.18em; padding-bottom: 0.298em;">≈</span></span><span id="MJXc-Node-195863" class="mjx-msup"><span class="mjx-base"><span id="MJXc-Node-195864" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.357em; padding-bottom: 0.357em;">0.6</span></span></span><span class="mjx-sup" style="font-size: 70.7%; vertical-align: 0.591em; padding-left: 0px; padding-right: 0.071em;"><span id="MJXc-Node-195865" class="mjx-mo" style="padding-left: 0.15em; padding-right: 0.15em;"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.18em; padding-bottom: 0.298em;">∘</span></span></span></span></span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mstyle displaystyle="true"><mo>≈</mo><msup><mn>0.6</mn><mo>∘</mo></msup></mstyle></math></span></span><script type="math/asciimath" id="MathJax-Element-26280">~~0.6^@</script>. This resolution is still impractical for precise rotation, necessitating a better model. As the output gear was already fixed, the only solution appeared to be making the input gear as small as possible.</p>
+</div>
+<div class="left half col">
+<center id="fig2">
+<p><img src="project_report/fig2a.jpg" alt="Figure 2 (a)">
+(a)</p>
+</center>
+</div>
+<div class="right half col">
+<center>
+<p><img src="project_report/fig2b.jpg" alt="Figure 2 (b)">
+(b)</p>
+</center>
+</div>
+<center>
+<small>fig. 2: (a) the circular ring with toothed-belt (b) the same attached to the goniometer</small>
+</center>
+<div class="page-num">3</div>
+</div>
+ <!--page 3-->
+<div class="page">
+<div class="left half col">
+<center id="fig3">
+<p><img src="project_report/fig3a.jpg" alt="Figure 3 (a)"></p>
+</center>
+</div>
+<div class="right half col">
+<center>
+<p><img src="project_report/fig3b.jpg" alt="Figure 3 (b)"></p>
+</center>
+</div>
+<center>
+<small>fig. 3: (a) the first model of driving gear (b) motor-gear assembly in contact with goniometer ring</small>
+</center><br>
+<div class="left half col content">
+<p>The gear ratio for the arrangement was calculated to be approximately 3:1, thus bringing down the resolution to <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span id="MathJax-Element-26281-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mstyle displaystyle=&quot;true&quot;><mo>&amp;#x2248;</mo><msup><mn>0.6</mn><mo>&amp;#x2218;</mo></msup></mstyle></math>" role="presentation" style="font-size: 106%; position: relative;"><span id="MJXc-Node-195866" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-195867" class="mjx-mrow"><span id="MJXc-Node-195868" class="mjx-mstyle"><span id="MJXc-Node-195869" class="mjx-mrow"><span id="MJXc-Node-195870" class="mjx-mo" style="padding-left: 0.333em; padding-right: 0.333em;"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.18em; padding-bottom: 0.298em;">≈</span></span><span id="MJXc-Node-195871" class="mjx-msup"><span class="mjx-base"><span id="MJXc-Node-195872" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.357em; padding-bottom: 0.357em;">0.6</span></span></span><span class="mjx-sup" style="font-size: 70.7%; vertical-align: 0.591em; padding-left: 0px; padding-right: 0.071em;"><span id="MJXc-Node-195873" class="mjx-mo" style="padding-left: 0.15em; padding-right: 0.15em;"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.18em; padding-bottom: 0.298em;">∘</span></span></span></span></span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mstyle displaystyle="true"><mo>≈</mo><msup><mn>0.6</mn><mo>∘</mo></msup></mstyle></math></span></span><script type="math/asciimath" id="MathJax-Element-26281">~~0.6^@</script>. This resolution is still impractical for precise rotation, necessitating a better model. As the output gear was already fixed, the only solution was to make the input gear as small as possible. But such smalls gear were not available.</p>
+<h4>4.3.2 Improved model</h4>
+<p>The screw of the horizontally aligned stepper motor has a very fine pitch of <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span id="MathJax-Element-26282-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mstyle displaystyle=&quot;true&quot;><mo>&amp;#x2248;</mo><mn>1.5</mn><mrow><mtext>mm</mtext></mrow></mstyle></math>" role="presentation" style="font-size: 106%; position: relative;"><span id="MJXc-Node-195874" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-195875" class="mjx-mrow"><span id="MJXc-Node-195876" class="mjx-mstyle"><span id="MJXc-Node-195877" class="mjx-mrow"><span id="MJXc-Node-195878" class="mjx-mo" style="padding-left: 0.333em; padding-right: 0.333em;"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.18em; padding-bottom: 0.298em;">≈</span></span><span id="MJXc-Node-195879" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.357em; padding-bottom: 0.357em;">1.5</span></span><span id="MJXc-Node-195880" class="mjx-mrow"><span id="MJXc-Node-195881" class="mjx-mtext"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.18em; padding-bottom: 0.357em;">mm</span></span></span></span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mstyle displaystyle="true"><mo>≈</mo><mn>1.5</mn><mrow><mtext>mm</mtext></mrow></mstyle></math></span></span><script type="math/asciimath" id="MathJax-Element-26282">~~1.5"mm"</script> per revolution. If the linear motion of the screw could be transformed back into rotation, it could make a very good driver gear that would greatly improve the gear ratio. There was a second gear with finer cogs, which fitted perfectly with the thread of the horizontal screw. So I decided to combine the two available gears onto a single shaft that would transmit the linear motion of the horizontal screw into rotation of the wheel attached to the goniometer (<a href="#fig4">fig. 4</a>).</p>
+</div>
+<div class="right half col content">
+<p>The combined gears thus effectively became a <em>double reduction gear</em><sup><a href="#cite6">[6]</a></sup>. Instead of direct calculation, the total reduction of the gear chain was estimated by comparing the rotations of the screw and the goniometer. It turned out to be<span class="MathJax_Preview" style="color: inherit; display: none;"></span><span id="MathJax-Element-26283-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mstyle displaystyle=&quot;true&quot;><mo>&amp;#x2248;</mo><mn>360</mn><mo>:</mo><mn>1</mn></mstyle></math>" role="presentation" style="font-size: 106%; position: relative;"><span id="MJXc-Node-195882" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-195883" class="mjx-mrow"><span id="MJXc-Node-195884" class="mjx-mstyle"><span id="MJXc-Node-195885" class="mjx-mrow"><span id="MJXc-Node-195886" class="mjx-mo" style="padding-left: 0.333em; padding-right: 0.333em;"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.18em; padding-bottom: 0.298em;">≈</span></span><span id="MJXc-Node-195887" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.357em; padding-bottom: 0.357em;">360</span></span><span id="MJXc-Node-195888" class="mjx-mo" style="padding-left: 0.111em; padding-right: 0.167em;"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.121em; padding-bottom: 0.357em;">:</span></span><span id="MJXc-Node-195889" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.357em; padding-bottom: 0.357em;">1</span></span></span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mstyle displaystyle="true"><mo>≈</mo><mn>360</mn><mo>:</mo><mn>1</mn></mstyle></math></span></span><script type="math/asciimath" id="MathJax-Element-26283">~~360:1</script>, i.e. one full revolution of the screw produced merely <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span id="MathJax-Element-26284-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mstyle displaystyle=&quot;true&quot;><msup><mn>1</mn><mo>&amp;#x2218;</mo></msup></mstyle></math>" role="presentation" style="font-size: 106%; position: relative;"><span id="MJXc-Node-195890" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-195891" class="mjx-mrow"><span id="MJXc-Node-195892" class="mjx-mstyle"><span id="MJXc-Node-195893" class="mjx-mrow"><span id="MJXc-Node-195894" class="mjx-msup"><span class="mjx-base"><span id="MJXc-Node-195895" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.357em; padding-bottom: 0.357em;">1</span></span></span><span class="mjx-sup" style="font-size: 70.7%; vertical-align: 0.591em; padding-left: 0px; padding-right: 0.071em;"><span id="MJXc-Node-195896" class="mjx-mo" style="padding-left: 0.15em; padding-right: 0.15em;"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.18em; padding-bottom: 0.298em;">∘</span></span></span></span></span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mstyle displaystyle="true"><msup><mn>1</mn><mo>∘</mo></msup></mstyle></math></span></span><script type="math/asciimath" id="MathJax-Element-26284">1^@</script> deflection of the goniometer. Thus the resolution of the assembly reduced to nearly <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span id="MathJax-Element-26285-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mstyle displaystyle=&quot;true&quot;><msup><mn>1.8</mn><mo>&amp;#x2218;</mo></msup><mo>/</mo><mn>360</mn></mstyle></math>" role="presentation" style="font-size: 106%; position: relative;"><span id="MJXc-Node-195897" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-195898" class="mjx-mrow"><span id="MJXc-Node-195899" class="mjx-mstyle"><span id="MJXc-Node-195900" class="mjx-mrow"><span id="MJXc-Node-195901" class="mjx-msup"><span class="mjx-base"><span id="MJXc-Node-195902" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.357em; padding-bottom: 0.357em;">1.8</span></span></span><span class="mjx-sup" style="font-size: 70.7%; vertical-align: 0.591em; padding-left: 0px; padding-right: 0.071em;"><span id="MJXc-Node-195903" class="mjx-mo" style="padding-left: 0.15em; padding-right: 0.15em;"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.18em; padding-bottom: 0.298em;">∘</span></span></span></span><span id="MJXc-Node-195904" class="mjx-mo" style="padding-left: 0.111em; padding-right: 0.111em;"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.475em; padding-bottom: 0.593em;">/</span></span><span id="MJXc-Node-195905" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.357em; padding-bottom: 0.357em;">360</span></span></span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mstyle displaystyle="true"><msup><mn>1.8</mn><mo>∘</mo></msup><mo>/</mo><mn>360</mn></mstyle></math></span></span><script type="math/asciimath" id="MathJax-Element-26285">1.8^@//360</script> which is equal to <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span id="MathJax-Element-26286-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mstyle displaystyle=&quot;true&quot;><msup><mn>0.005</mn><mo>&amp;#x2218;</mo></msup></mstyle></math>" role="presentation" style="font-size: 106%; position: relative;"><span id="MJXc-Node-195906" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-195907" class="mjx-mrow"><span id="MJXc-Node-195908" class="mjx-mstyle"><span id="MJXc-Node-195909" class="mjx-mrow"><span id="MJXc-Node-195910" class="mjx-msup"><span class="mjx-base"><span id="MJXc-Node-195911" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.357em; padding-bottom: 0.357em;">0.005</span></span></span><span class="mjx-sup" style="font-size: 70.7%; vertical-align: 0.591em; padding-left: 0px; padding-right: 0.071em;"><span id="MJXc-Node-195912" class="mjx-mo" style="padding-left: 0.15em; padding-right: 0.15em;"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.18em; padding-bottom: 0.298em;">∘</span></span></span></span></span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mstyle displaystyle="true"><msup><mn>0.005</mn><mo>∘</mo></msup></mstyle></math></span></span><script type="math/asciimath" id="MathJax-Element-26286">0.005^@</script> or 0.3 arc min. This is over three times finer than the resolution achievable by hand operation of the device.</p>
+<h4>4.4 Controlling program and logic</h4>
+<p>Except for the tracking and sensing algorithm, the C program written for the Stepper motor experiment was reused <em>as is</em> for the project. The tracking algorithm used is a simple linear search for the maximum value of detected intensity. The relevant part of the code with comments is given in the next page.<sup><a href="#cite8">[8]</a></sup></p>
+</div>
+<div class="left half col">
+<center style="max-width: 80%; margin: 0 auto;" id="fig4">
+<p><img src="project_report/fig4a.jpg" alt="Figure 4 (a)">
+(a)</p>
+</center>
+</div>
+<div class="left half col">
+<center style="max-width: 90%; margin: 0 auto;">
+<p><img src="project_report/fig4b.jpg" alt="Figure 4 (b)">
+(b)</p>
+</center>
+</div>
+<center>
+<small>fig. 4: (a) the improved model of torque transmission shaft (b) shaft in contact with the goniometer ring</small>
+</center>
+<div class="page-num">4</div>
+</div>
+ <!--page 4-->
+<div class="page content">
+<pre><code class="language-arduino"><span class="hljs-keyword">void</span> <span class="hljs-built_in">loop</span>() {
+  <span class="hljs-built_in">if</span> (scan == STARTED) {    <span class="hljs-comment">// The motor has been set to rotate</span>
+    sensor_out = sensor();
+    <span class="hljs-built_in">if</span> (tracking == STARTED) {    <span class="hljs-comment">// The detector has started receiving input</span>
+      <span class="hljs-built_in">if</span> (sensor_out &gt; sensor_max) {
+        sensor_max = sensor_out;  <span class="hljs-comment">// Store the maximum obtained value till now</span>
+      } <span class="hljs-built_in">else</span> <span class="hljs-built_in">if</span> (sensor_out &lt; sensor_max / <span class="hljs-number">10</span>) {
+        <span class="hljs-built_in">Serial</span>.<span class="hljs-built_in">print</span>(<span class="hljs-string">"Intensity peak: "</span>);
+        <span class="hljs-built_in">Serial</span>.<span class="hljs-built_in">print</span>(sensor_max * SENSOR_CONV, <span class="hljs-number">8</span>);
+        <span class="hljs-built_in">Serial</span>.<span class="hljs-built_in">print</span>(<span class="hljs-string">" V\n"</span>);
+        tracking = FINISHED;
+      }
+    } <span class="hljs-built_in">else</span> <span class="hljs-built_in">if</span> (tracking == NOT_STARTED &amp;&amp; sensor_out &gt; <span class="hljs-number">0</span>) {
+      scan_delay *= <span class="hljs-number">4</span>;            <span class="hljs-comment">// Slow down the motor for fine tracking</span>
+      tracking = STARTED;         <span class="hljs-comment">// Start tracking</span>
+    } <span class="hljs-built_in">else</span> <span class="hljs-built_in">if</span> (tracking == FINISHED &amp;&amp; sensor_out == <span class="hljs-number">0</span>) {
+      scan = FINISHED;            <span class="hljs-comment">// We have crossed the LASER spot, stop tracking</span>
+      <span class="hljs-built_in">return</span>;
+    }
+    <span class="hljs-comment">// Turn the stepper motor by a single step</span>
+    tick(<span class="hljs-number">1</span>, scan_delay, CLOCKWISE, ++stepper_pos);
+  } <span class="hljs-built_in">else</span> {
+    relax();                      <span class="hljs-comment">// Release the motor</span>
+  }
+}
+</code></pre>
+<center>
+<small>Code: Arduino program main loop for tracking the LASER beam spot</small>
+</center>
+<h4>4.5 Fixing the final assembly on the breadboard</h4>
+<p>The optical bench along with the stepper motor table was finally mounted on an optical breadboard. Holders were used to fix them to the board to prevent wobbling and facilitate stable operation. The final configuration was as shown in <a href="#fig5">fig. 5</a>.</p>
+<center style="max-width: 70%; margin: 0 auto;" id="fig5">
+<p><img src="project_report/fig5.jpg" alt="Figure 5">
+<small>fig. 5: final configuration</small></p>
+</center>
+<div class="page-num">5</div>
+</div>
+ <!--page 5-->
+<div class="page">
+<div class="left half col content">
+<h3>5. Result and Discussions</h3>
+<p>The whole assembly mostly functioned as expected, apart for some minor irregularities in the motion which could be improved by better engineering. Successive scans were made for a small range of angles of incidence. The console output showing peak voltages detected during each scan is shown in <a href="#fig6">fig. 6</a>. Clearly the Arduino is able to record the intensities at a finer precision, wider range and at a smaller least count. This would allow to plot a smoother intensity-vs-angle curve than the original experiment. Unfortunately the entire Brewster Angler experiment  could not be redone with the improved equipment due to the time constraints on the project.</p>
+<center id="fig6">
+<p><img src="project_report/fig6.png" alt="Figure 6">
+<small>fig. 6: Peak voltage detected during subsequent scans</small></p>
+</center>
+<p>A second time, the smooth variation of the detector output as it was made to scan slowly through the laser beam spot was recorded in the Arduino's serial plotter. The plots (which should ideally be Gaussians) for three different scans are shown in <a href="#fig7">fig. 7</a>.</p>
+<center id="fig7">
+<p><img src="project_report/fig7a.png" alt="Figure 7">
+(a)</p>
+<p><small>fig. 7: Variation of intensity across the LASER spot for three difference scans (a), (b) and (c).</small></p>
+</center>
+</div>
+<div class="right half col content"><br>
+<center>
+<p><img src="project_report/fig7b.png" alt="Figure 7">
+(b)</p>
+</center>
+<center>
+<p><img src="project_report/fig7c.png" alt="Figure 7">
+(c)</p>
+</center>
+<p>Instead of the peak value, the total area under the curves can be taken as a better measure of the total intensity of light received by the detector.</p>
+<h3>6. Conclusions</h3>
+<p>The project turned out to be much more challenging to implement than expected. Still an acceptable solution was obtained after much deliberation and trials. As already mentioned, the engineering is far from ideal, but the constructed precision-rotation assembly has satisfactorily served the original purpose, which was to get a flair of the real-world application of computer controlled electro-mechanical machinery.</p>
+<p>Even though the mechanical drawbacks of the apparatus has been resolved by this project, the optical drawbacks related to the polarisation of the LASER beam and calibration of the polariser<sup><a href="#cite7">[7]</a></sup> still persists. Some solution needs to be employed to overcome those issues as well. Only then can the setup be capable of high precision measurement.</p>
+</div>
+<div class="page-num">6</div>
+</div>
+ <!--page 6-->
+<div class="page">
+<h3>References</h3>
+<p><span id="cite1">[1] Stepper Motor ‐ Wikipedia: <a href="https://en.wikipedia.org/wiki/Stepper_motor#Applications"><code>https://en.wikipedia.org/wiki/Stepper_motor#Applications</code></a><span></span></span></p>
+<p><span id="cite2">[2] OS8 – Polarisation Brewster's Angle:<a href="https://courses.iitm.ac.in/mod/folder/view.php?id=15680"><code>https://courses.iitm.ac.in/mod/folder/view.php?id=15680</code></a><span></span></span></p>
+<p><span id="cite3">[3] The apparatus used in the Optics Lab is an older version of the model HO-ED-P-01 manufactured by Holmarc Opto-Mechatronics Pvt. Ltd.Official page: <a href="https://www.holmarc.com/brewster_angle.php"><code>https://www.holmarc.com/brewster_angle.php</code></a></span></p>
+<p><span id="cite4">[4] IS1 – Stepper motor: <a href="https://courses.iitm.ac.in/mod/folder/view.php?id=15681"><code>https://courses.iitm.ac.in/mod/folder/view.php?id=15681</code></a></span></p>
+<p><span id="cite5">[5] Photodiode – Wikipedia: <a href="https://en.wikipedia.org/wiki/Photodiode#Photoconductive_mode"><code>https://en.wikipedia.org/wiki/Photodiode#Photoconductive_mode</code></a></span></p>
+<p><span id="cite6">[6] Gear Train – Wikipedia: <a href="https://en.wikipedia.org/wiki/Gear_train#Double_reduction_gear"><code>https://en.wikipedia.org/wiki/Gear_train#Double_reduction_gear</code></a></span></p>
+<p><span id="cite7">[7] Mentioned in detail in the lab report to OS8 – Polarisation Brewster's Angle experiment submitted by the author during the Lab Course.</span></p>
+<p><span id="cite8">[8] Full program: </span></p>
+<h3>Acknowledgements</h3>
+<div class="content">
+<p>This project would not have been a success without the timely help from a number of generous personalities. I take the opportunity to thank them all.</p>
+<p>First and foremost, I thank Mr. Somasundaram U. of M.Sc. Optics lab for providing all the equipments and for his support throughout the project. I also thank the lab assistants of the other M.Sc. labs for their cooperation in providing materials.</p>
+<p>I wish to thank my classmates Tanmay Thakur, M. Ranjith Kumar, Mohd. Ali and Keshav Shishodia for their valuable input, help and suggestions.</p>
+<p>I would like to thank the department workshop for making  a crucial part of the rotation assembly that helped me attach the holder to the goniometer ring.</p>
+<p>Finally I want to thank my project guide Dr. Ganapathy for his cooperation and concern.</p>
+<div class="page-num">7</div>
+</div>
+</div> <!--page 7-->
+<div class="page">
+<h3>Videos</h3>
+<center>
+  <video src="project_report/lab_1.mp4" controls></video><br>
+<small>Video 1: operation with the first gear model</small>
+<p></p>
+<video src="project_report/lab_2.mp4" controls></video><br>
+<small>Video 2: operation with the improved torque transmission shaft</small>
+</center>
+<div class="page-num">8</div>
+</div>
+</div> <!--page 8-->
+        </div>
+      </div>
+    </main>
+    <button id="toggle-theme">☯</button>
+</body></html>
